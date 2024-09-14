@@ -43,6 +43,7 @@
 
 
 void shutdown_init(void);
+void shutdown_init(void);
 
 // Variables
 static volatile bool i2c_running = false;
@@ -368,7 +369,7 @@ static THD_FUNCTION(shutdown_thread, arg) {
 	        } else {
 	            if((power_key_pressed_ms > 50) && (power_key_pressed_ms < 500)) {
 					// TODO: Could toggle different led types here??
-	                //power_key_click = 1;
+	                power_key_click = 1;
 	            }
 	            power_key_pressed_ms = 0;
 	        }
