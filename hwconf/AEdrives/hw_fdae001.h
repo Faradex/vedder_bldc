@@ -29,12 +29,12 @@
 #define HW_HAS_PHASE_SHUNTS
 
 // Macros
-#define ENABLE_GATE()			palClearPad(GPIOB, 5)
-#define DISABLE_GATE()			palSetPad(GPIOB, 5)
+#define ENABLE_GATE()			palClearPad(GPIOC, 9)
+#define DISABLE_GATE()			palSetPad(GPIOC, 9)
 
 #define DCCAL_ON()
 #define DCCAL_OFF()
-#define IS_DRV_FAULT()			(!palReadPad(GPIOB, 7))
+#define IS_DRV_FAULT()			(!palReadPad(GPIOC, 12))
 
 #define LED_GREEN_ON()			palSetPad(GPIOB, 0)
 #define LED_GREEN_OFF()			palClearPad(GPIOB, 0)
@@ -44,22 +44,23 @@
 /*
  * ADC Vector
  *
- * 0:	IN0		SENS1
- * 1:	IN1		SENS2
- * 2:	IN2		SENS3
- * 3:	IN10	CURR1
- * 4:	IN11	CURR2
- * 5:	IN12	CURR3
- * 6:	IN5		ADC_EXT1
- * 7:	IN6		ADC_EXT2
- * 8:	IN3		TEMP_PCB
- * 9:	IN14	TEMP_MOTOR
- * 10:	IN15	ADC_EXT3
- * 11:	IN13	AN_IN
+ * 0:	IN0		SENS1       -> V_SENSE_A
+ * 1:	IN1		SENS2       -> V_SENSE_B
+ * 2:	IN2		SENS3       -> V_SENSE_C
+ * 3:	IN10	CURR1       -> C_SENSE_A
+ * 4:	IN11	CURR2       -> C_SENSE_B
+ * 5:	IN12	CURR3       -> C_SENSE_C
+ * 6:	IN5		ADC_EXT1    -> ADC_EXT1
+ * 7:	IN6		ADC_EXT2    -> ADC_EXT2
+ * 8:	IN3		TEMP_PCB    -> TEMP_PCB
+ * 9:	IN14	TEMP_MOTOR  -> TEMP_MOTOR
+ * 10:	IN15	ADC_EXT3    -> NOT_USED
+ * 11:	IN13	AN_IN       -> EXT_SUPPLY_SENSE
  * 12:	Vrefint
- * 13:	IN0		SENS1
- * 14:	IN1		SENS2
+ * 13:	IN0		SENS1       -> V_SENSE_A
+ * 14:	IN1		SENS2       -> V_SENSE_B
  */
+
 
 #define HW_ADC_CHANNELS			15
 #define HW_ADC_INJ_CHANNELS		3
@@ -111,16 +112,30 @@
 // Voltage on ADC channel
 #define ADC_VOLTS(ch)			((float)ADC_Value[ch] / 4096.0 * V_REG)
 
-// Double samples in beginning and end for positive current measurement.
-// Useful when the shunt sense traces have noise that causes offset.
+// ** Current Sense Double Sampling Configuration **
+// These macros enable a more advanced current sampling technique for each motor
+// phase. When enabled (set to 1), the firmware will take two ADC measurements
+// of the phase current within a single PWM cycle, instead of the usual one.
+//
+// This is beneficial for a few reasons:
+// 1.  Improved Accuracy: By sampling at two distinct points in the PWM cycle
+//     (typically when all low-side or all high-side MOSFETs are on), the
+//     firmware can get a cleaner, more accurate reading of the true motor current.
+// 2.  Noise Reduction: Averaging two samples helps to filter out electrical noise
+//     and correct for small offsets in the current sensing hardware.
+// 3.  Better FOC Performance: More accurate current readings lead to smoother
+//     and more efficient Field-Oriented Control (FOC).
+//
+// The '#ifndef' block ensures that if these macros haven't been defined
+// previously, they will default to being enabled for this hardware configuration.
 #ifndef CURR1_DOUBLE_SAMPLE
-#define CURR1_DOUBLE_SAMPLE		0
+#define CURR1_DOUBLE_SAMPLE		1
 #endif
 #ifndef CURR2_DOUBLE_SAMPLE
-#define CURR2_DOUBLE_SAMPLE		0
+#define CURR2_DOUBLE_SAMPLE		1
 #endif
 #ifndef CURR3_DOUBLE_SAMPLE
-#define CURR3_DOUBLE_SAMPLE		0
+#define CURR3_DOUBLE_SAMPLE		1
 #endif
 
 // COMM-port ADC GPIOs
@@ -130,20 +145,40 @@
 #define HW_ADC_EXT2_PIN			6
 
 // UART Peripheral
-#define HW_UART_DEV				SD3
-#define HW_UART_GPIO_AF			GPIO_AF_USART3
+#define HW_UART_DEV				SD3                         // Naming convention is from ChibiOS -> USART3
+#define HW_UART_GPIO_AF			GPIO_AF_USART3              // Forcing alternate function to be USART3
 #define HW_UART_TX_PORT			GPIOB
 #define HW_UART_TX_PIN			10
 #define HW_UART_RX_PORT			GPIOB
 #define HW_UART_RX_PIN			11
 
 // ICU Peripheral for servo decoding
+// ** ICU (Input Capture Unit) Peripheral for Servo/PPM Input **
+// This section configures a timer peripheral to read and decode the pulse-width
+// modulated (PPM) signal from a standard RC receiver. This allows the VESC
+// to be controlled by an RC remote for throttle, steering, etc.
+
+// HW_USE_SERVO_TIM4: Enables the servo decoding feature and assigns Timer 4
+// of the microcontroller to handle the task.
 #define HW_USE_SERVO_TIM4
-#define HW_ICU_DEV				ICUD4
-#define HW_ICU_CHANNEL			ICU_CHANNEL_1
-#define HW_ICU_GPIO_AF			GPIO_AF_TIM4
-#define HW_ICU_GPIO				GPIOB
-#define HW_ICU_PIN				6
+
+// HW_ICU_DEV: Specifies the Input Capture Unit Driver to use. 'ICUD4' is the
+// driver in the underlying OS (ChibiOS) that corresponds to Timer 4.
+#define HW_ICU_DEV              ICUD4
+
+// HW_ICU_CHANNEL: A timer can have multiple input channels. This selects
+// the first channel (ICU_CHANNEL_1) of the timer for capturing the signal.
+#define HW_ICU_CHANNEL          ICU_CHANNEL_1
+
+// HW_ICU_GPIO & HW_ICU_PIN: Define the physical pin that will receive the
+// signal from the RC receiver (in this case, GPIOB, Pin 6).
+#define HW_ICU_GPIO             GPIOB
+#define HW_ICU_PIN              6
+
+// HW_ICU_GPIO_AF: Sets the "Alternate Function" for the pin. This internally
+// connects the physical pin to the Timer 4 peripheral, allowing it to measure
+// the incoming pulse width.
+#define HW_ICU_GPIO_AF          GPIO_AF_TIM4
 
 // I2C Peripheral
 #define HW_I2C_DEV				I2CD2
