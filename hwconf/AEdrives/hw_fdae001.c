@@ -21,7 +21,6 @@
 #include "hal.h"
 #include "stm32f4xx_conf.h"
 #include "utils_math.h"
-#include "drv8301.h"
 
 // Variables
 static volatile bool i2c_running = false;
@@ -49,7 +48,7 @@ void hw_init_gpio(void) {
 			PAL_STM32_OSPEED_HIGHEST);
 
 	// ENABLE_GATE
-	palSetPadMode(GPIOB, 5,
+	palSetPadMode(GPIOC, 9,
 			PAL_MODE_OUTPUT_PUSHPULL |
 			PAL_STM32_OSPEED_HIGHEST);
 	ENABLE_GATE();
@@ -81,7 +80,7 @@ void hw_init_gpio(void) {
 	palSetPadMode(HW_HALL_ENC_GPIO3, HW_HALL_ENC_PIN3, PAL_MODE_INPUT_PULLUP);
 
 	// Fault pin
-	palSetPadMode(GPIOB, 7, PAL_MODE_INPUT_PULLUP);
+	palSetPadMode(GPIOC, 12, PAL_MODE_INPUT_PULLUP);
 
 	// ADC Pins
 	palSetPadMode(GPIOA, 0, PAL_MODE_INPUT_ANALOG);
@@ -98,7 +97,6 @@ void hw_init_gpio(void) {
 	palSetPadMode(GPIOC, 4, PAL_MODE_INPUT_ANALOG);
 	palSetPadMode(GPIOC, 5, PAL_MODE_INPUT_ANALOG);
 
-	drv8301_init();
 }
 
 void hw_setup_adc_channels(void) {
