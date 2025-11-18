@@ -38,7 +38,9 @@ typedef enum {
 	ENCODER_TYPE_ABI,
 	ENCODER_TYPE_AS5x47U,
 	ENCODER_TYPE_BISSC,
-	ENCODER_TYPE_CUSTOM
+	ENCODER_TYPE_CUSTOM,
+	ENCODER_TYPE_PWM,
+	ENCODER_TYPE_PWM_ABI,
 } encoder_type_t;
 
 typedef struct {
@@ -167,6 +169,8 @@ typedef struct {
 	float phase_correction; //phase angle correction (in deg) when encoder outputs sin(anle)/cos(angle+pase_correction)
 	float sph; // sin of the phase_correction angle
 	float cph; // cos of the phase_correction angle
+	float ratio;
+	float delay_comp_sign;
 
 	ENCSINCOS_state state;
 } ENCSINCOS_config_t;

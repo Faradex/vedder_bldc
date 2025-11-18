@@ -119,10 +119,10 @@ extern "C" {
  * \param data_size The size of the data storage array in number of uint32_t elements.
  * \param bitmap Pointer to an array of uint32_t for memory allocator meta-data.
  * \param bitmap_size The size of the meta-data in number of uint32_t elements.
- * \return
+ * \return true on success and false otherwise.
  */
-int lbm_memory_init(lbm_uint *data, lbm_uint data_size,
-                           lbm_uint *bitmap, lbm_uint bitmap_size);
+bool lbm_memory_init(lbm_uint *data, lbm_uint data_size,
+                     lbm_uint *bitmap, lbm_uint bitmap_size);
 
 /** Set the size of the memory reserve in words.
  * \param num_words Number of words to treat as reserve.
@@ -142,6 +142,14 @@ lbm_uint lbm_memory_num_words(void);
  * \return The number of free words in the symbols and arrays memory.
  */
 lbm_uint lbm_memory_num_free(void);
+/** Get the maximum of memory usage.
+ *
+ * \return Maximal memory usage.
+ */
+lbm_uint lbm_memory_maximum_used(void);
+/** Update memory usage statistics. called by GC automatically
+  */
+void lbm_memory_update_min_free(void);
 /** Find the length of the longest run of consecutire free indices
  *  in the LBM memory.
  */
@@ -152,7 +160,7 @@ lbm_uint lbm_memory_longest_free(void);
  * \return pointer to allocated array or NULL.
  */
 lbm_uint *lbm_memory_allocate(lbm_uint num_words);
-/** Free an allocated array int the symbols and arrays memory.
+/** Free an allocated array in the symbols and arrays memory.
  *
  * \param ptr Pointer to array to free.
  * \return 1 on success and 0 on failure.

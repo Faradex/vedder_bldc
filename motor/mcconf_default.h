@@ -322,12 +322,6 @@
 #ifndef MCCONF_FOC_OPENLOOP_RPM_LOW
 #define MCCONF_FOC_OPENLOOP_RPM_LOW		0.0		// Fraction of OPENLOOP_RPM at minimum motor current
 #endif
-#ifndef MCCONF_FOC_D_GAIN_SCALE_START
-#define MCCONF_FOC_D_GAIN_SCALE_START	0.9		// Start reducing D axis current controller gain at this modulation
-#endif
-#ifndef MCCONF_FOC_D_GAIN_SCALE_MAX_MOD
-#define MCCONF_FOC_D_GAIN_SCALE_MAX_MOD	0.2		// D axis currnet controller gain at maximum modulation
-#endif
 #ifndef MCCONF_FOC_SL_OPENLOOP_HYST
 #define MCCONF_FOC_SL_OPENLOOP_HYST		0.1		// Time below min RPM to activate openloop (s)
 #endif
@@ -406,6 +400,15 @@
 #ifndef MCCONF_FOC_OBSERVER_TYPE
 #define MCCONF_FOC_OBSERVER_TYPE		FOC_OBSERVER_MXLEMMING_LAMBDA_COMP // Position observer type for FOC
 #endif
+#ifndef MCCONF_FOC_HFI_AMB_MODE
+#define MCCONF_FOC_HFI_AMB_MODE			FOC_AMB_MODE_SIX_VECTOR // HFI ambiguity resolution mode
+#endif
+#ifndef MCCONF_FOC_HFI_AMB_CURRENT
+#define MCCONF_FOC_HFI_AMB_CURRENT		60.0 // HFI ambiguity resolution current
+#endif
+#ifndef MCCONF_FOC_HFI_AMB_TRES
+#define MCCONF_FOC_HFI_AMB_TRES			15 // HFI ambiguity resolution threshold
+#endif
 #ifndef MCCONF_FOC_HFI_VOLTAGE_START
 #define MCCONF_FOC_HFI_VOLTAGE_START	20 // HFI voltage at start when resolving ambiguity
 #endif
@@ -416,7 +419,7 @@
 #define MCCONF_FOC_HFI_GAIN				0.3 // Correction gain for HFI V2
 #endif
 #ifndef MCCONF_FOC_HFI_MAX_ERR
-#define MCCONF_FOC_HFI_MAX_ERR			0.15 // Truncate HFI error at this value
+#define MCCONF_FOC_HFI_MAX_ERR			0.30 // Truncate HFI error at this value
 #endif
 #ifndef MCCONF_FOC_HFI_HYST
 #define MCCONF_FOC_HFI_HYST				0.0 // Sense vector offset hysteresis for HFI V2
@@ -427,6 +430,9 @@
 #ifndef MCCONF_FOC_SL_ERPM_HFI
 #define MCCONF_FOC_SL_ERPM_HFI			3000.0	// ERPM above which only the observer is used
 #endif
+#ifndef MCCONF_FOC_HFI_RESET_ERPM
+#define MCCONF_FOC_HFI_RESET_ERPM		500.0	// Reset HFI state below this ERPM
+#endif
 #ifndef MCCONF_FOC_HFI_START_SAMPLES
 #define MCCONF_FOC_HFI_START_SAMPLES	5 // Sample this often at start to resolve ambiguity
 #endif
@@ -436,8 +442,8 @@
 #ifndef MCCONF_FOC_HFI_SAMPLES
 #define MCCONF_FOC_HFI_SAMPLES			HFI_SAMPLES_16 // Samples per motor revolution for HFI
 #endif
-#ifndef MCCONF_FOC_OFFSETS_CAL_ON_BOOT
-#define MCCONF_FOC_OFFSETS_CAL_ON_BOOT	true // Measure offsets every boot
+#ifndef MCCONF_FOC_OFFSETS_CAL_MODE
+#define MCCONF_FOC_OFFSETS_CAL_MODE		1 // Offset calibration mode
 #endif
 #ifndef MCCONF_FOC_OFFSETS_CURRENT_0
 #define MCCONF_FOC_OFFSETS_CURRENT_0	2048.0 // Current 0 offset
@@ -495,6 +501,9 @@
 #endif
 #ifndef MCCONF_FOC_SHORT_LS_ON_ZERO_DUTY
 #define MCCONF_FOC_SHORT_LS_ON_ZERO_DUTY false // Short low-side phases on zero duty cycle
+#endif
+#ifndef MCCONF_FOC_OVERMOD_FACTOR
+#define MCCONF_FOC_OVERMOD_FACTOR 		1.0 // Overmodulation factor
 #endif
 
 // GPD
