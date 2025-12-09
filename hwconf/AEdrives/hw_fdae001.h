@@ -214,11 +214,11 @@
 #define HW_SPI_PORT_NSS			GPIOA
 #define HW_SPI_PIN_NSS			4
 #define HW_SPI_PORT_SCK			GPIOB
-#define HW_SPI_PIN_SCK			5
+#define HW_SPI_PIN_SCK			3
 #define HW_SPI_PORT_MOSI		GPIOA
 #define HW_SPI_PIN_MOSI			7
 #define HW_SPI_PORT_MISO		GPIOB
-#define HW_SPI_PIN_MISO			7
+#define HW_SPI_PIN_MISO			4
 
 // Measurement macros
 #define ADC_V_L1				ADC_Value[ADC_IND_SENS1]
@@ -247,10 +247,10 @@
 // Setting limits
 #define HW_LIM_CURRENT			-20.0, 20.0
 #define HW_LIM_CURRENT_IN		-20.0,20.0
-#define HW_LIM_CURRENT_ABS		0.0, 30.0
+#define HW_LIM_CURRENT_ABS		0.0, 22.0
 #define HW_LIM_VIN				12, 58
-#define HW_LIM_ERPM				-200e3, 200e3
-#define HW_LIM_DUTY_MIN			0.0, 0.5
+#define HW_LIM_ERPM				-5400, 5400
+#define HW_LIM_DUTY_MIN			0.0, 0.99
 #define HW_LIM_DUTY_MAX			0.0, 0.99
 #define HW_LIM_TEMP_FET			-40.0, 110.0
 
