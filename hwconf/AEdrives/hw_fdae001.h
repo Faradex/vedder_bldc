@@ -244,6 +244,15 @@
 #define MCCONF_FOC_SAMPLE_V0_V7			true	// Run control loop in both v0 and v7 (requires phase shunts)
 #endif
 
+/*
+Parameter,VESC #define,Value in your Code,Physical Meaning
+Motor Driving, HW_LIM_CURRENT (Max),     20.0 A,  Max torque to accelerate.
+Motor Braking, HW_LIM_CURRENT (Min),     -20.0 A, Max braking force (torque).
+Battery Draw,  HW_LIM_CURRENT_IN (Max),  20.0 A,  Max power pulled from battery.
+Battery Regen, HW_LIM_CURRENT_IN (Min),  -20.0 A, Max power pushed back into battery.
+Safety Cutoff, HW_LIM_CURRENT_ABS,       30.0 A,  Instant shutdown threshold.
+*/
+
 // Setting limits
 #define HW_LIM_CURRENT			-20.0, 20.0
 #define HW_LIM_CURRENT_IN		-20.0,20.0
