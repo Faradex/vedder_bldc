@@ -103,8 +103,8 @@
 #define GET_INPUT_VOLTAGE()		((V_REG / 4095.0) * (float)ADC_Value[ADC_IND_VIN_SENS] * ((VIN_R1 + VIN_R2) / VIN_R2))
 
 // NTC Termistors
-#define NTC_RES(adc_val)   (10000.0 * (4095.0 / (float)((adc_val < 740) ? 740 : adc_val) - 1.0))
-#define NTC_TEMP(adc_ind)       25
+#define NTC_RES(adc_val)		((4095.0 * 10000.0) / adc_val - 10000.0)
+#define NTC_TEMP(adc_ind)		(1.0 / ((logf(NTC_RES(ADC_Value[adc_ind]) / 10000.0) / 3380.0) + (1.0 / 298.15)) - 273.15)
 
 #define NTC_RES_MOTOR(adc_val)	(10000.0 / ((4095.0 / (float)adc_val) - 1.0)) // Motor temp sensor on low side
 #define NTC_TEMP_MOTOR(beta)	(1.0 / ((logf(NTC_RES_MOTOR(ADC_Value[ADC_IND_TEMP_MOTOR]) / 10000.0) / beta) + (1.0 / 298.15)) - 273.15)
@@ -247,7 +247,7 @@
 #define MCCONF_DEFAULT_MOTOR_TYPE		MOTOR_TYPE_FOC
 #endif
 #ifndef MCCONF_L_MAX_ABS_CURRENT
-#define MCCONF_L_MAX_ABS_CURRENT		21	// The maximum absolute current above which a fault is generated
+#define MCCONF_L_MAX_ABS_CURRENT		25	// The maximum absolute current above which a fault is generated
 #endif
 #ifndef MCCONF_FOC_SAMPLE_V0_V7
 #define MCCONF_FOC_SAMPLE_V0_V7			true	// Run control loop in both v0 and v7 (requires phase shunts)
@@ -255,18 +255,18 @@
 
 /*
 Parameter,VESC #define,Value in your Code,Physical Meaning
-Motor Driving, HW_LIM_CURRENT (Max),     21.0 A,  Max torque to accelerate.
-Motor Braking, HW_LIM_CURRENT (Min),     -21.0 A, Max braking force (torque).
-Battery Draw,  HW_LIM_CURRENT_IN (Max),  21.0 A,  Max power pulled from battery.
-Battery Regen, HW_LIM_CURRENT_IN (Min),  -22.0 A, Max power pushed back into battery.
-Safety Cutoff, HW_LIM_CURRENT_ABS,       30.0 A,  Instant shutdown threshold.
+Motor Driving, HW_LIM_CURRENT (Max),     30.0 A,  Max torque to accelerate.
+Motor Braking, HW_LIM_CURRENT (Min),     -30.0 A, Max braking force (torque).
+Battery Draw,  HW_LIM_CURRENT_IN (Max),  30.0 A,  Max power pulled from battery.
+Battery Regen, HW_LIM_CURRENT_IN (Min),  -30.0 A, Max power pushed back into battery.
+Safety Cutoff, HW_LIM_CURRENT_ABS,       35.0 A,  Instant shutdown threshold.
 */
 
 // Setting limits
-#define HW_LIM_CURRENT			-21.0, 21.0
-#define HW_LIM_CURRENT_IN		-22.0,21.0
-#define HW_LIM_CURRENT_ABS		0.0, 30.0
-#define HW_LIM_VIN				12, 58
+#define HW_LIM_CURRENT			-25.0, 25.0
+#define HW_LIM_CURRENT_IN		-30.0,30.0
+#define HW_LIM_CURRENT_ABS		0.0, 35.0
+#define HW_LIM_VIN				24, 58
 #define HW_LIM_ERPM				-10000, 10000
 #define HW_LIM_DUTY_MIN			0.0, 0.99
 #define HW_LIM_DUTY_MAX			0.0, 0.99
